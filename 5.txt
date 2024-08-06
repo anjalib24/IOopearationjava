@@ -1,0 +1,103 @@
+Deserialization in Java is the process of converting a byte stream back into a copy of the original object. It is the reverse of serialization, which converts an object into a byte stream. Deserialization reconstructs the object from the serialized data, restoring its state.
+
+Key Points of Deserialization
+
+1. Serializable Class: The class of the object being deserialized must implement the `Serializable` interface.
+2. ObjectInputStream: This class is used to read objects from an input stream, typically a file or network connection, that contains the serialized byte stream.
+3. serialVersionUID: During deserialization, the `serialVersionUID` of the class is checked to ensure that the class is compatible with the serialized object. If they don't match, an `InvalidClassException` is thrown.
+
+## Example
+
+### Step 1: Define a Serializable Class
+
+```java
+import java.io.Serializable;
+
+public class Person implements Serializable {
+    private static final long serialVersionUID = 1L; // Unique identifier for this class
+    
+    private String name;
+    private int age;
+    private transient String password; // This field will not be serialized
+    
+    public Person(String name, int age, String password) {
+        this.name = name;
+        this.age = age;
+        this.password = password;
+    }
+    
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "', age=" + age + ", password='" + password + "'}";
+    }
+}
+```
+
+### Step 2: Serialize the Object
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class SerializeExample {
+    public static void main(String[] args) {
+        Person person = new Person("John Doe", 30, "secret");
+
+        try (FileOutputStream fileOut = new FileOutputStream("person.ser");
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(person);
+            System.out.println("Serialized data is saved in person.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+}
+```
+
+### Step 3: Deserialize the Object
+
+```java
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+public class DeserializeExample {
+    public static void main(String[] args) {
+        Person person = null;
+
+        try (FileInputStream fileIn = new FileInputStream("person.ser");
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            person = (Person) in.readObject();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Person class not found");
+            c.printStackTrace();
+        }
+
+        System.out.println("Deserialized Person...");
+        System.out.println(person);
+    }
+}
+```
+
+### Output
+When you run the `SerializeExample` program, it will create a file named `person.ser` that contains the serialized object. When you run the `DeserializeExample` program, it will read the object from `person.ser` and print its contents.
+
+Output:
+```
+Serialized data is saved in person.ser
+Deserialized Person...
+Person{name='John Doe', age=30, password='null'}
+```
+
+Note that the `password` field is `null` after deserialization because it was marked as `transient`.
+
+## Summary
+- **Deserialization**: The process of converting a byte stream back into an object.
+- **Serializable Class**: The class must implement the `Serializable` interface.
+- **ObjectInputStream**: Used to read the object from the byte stream.
+- **serialVersionUID**: Ensures compatibility between the serialized object and its class definition.
+
+Deserialization allows objects to be easily reconstructed from a saved state, making it useful for persisting data, communication between applications, and more.

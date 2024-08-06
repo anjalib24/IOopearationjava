@@ -1,0 +1,50 @@
+The `OutputStream` class in Java provides several methods for writing bytes of data to an output destination. Here are the main methods of `OutputStream`:
+
+1. **`write(int b)`**: Writes the specified byte to the output stream. The byte is represented by the least significant eight bits of the given integer value.
+
+2. **`write(byte[] b)`**: Writes `b.length` bytes from the specified byte array to the output stream.
+
+3. **`write(byte[] b, int off, int len)`**: Writes `len` bytes from the specified byte array starting at offset `off` to the output stream.
+
+4. **`flush()`**: Flushes the output stream and forces any buffered output bytes to be written out. This is useful when you want to ensure that all data has been sent to the destination.
+
+5. **`close()`**: Closes the output stream and releases any system resources associated with it. Once the stream is closed, further write operations will throw an `IOException`.
+
+Here is an example that demonstrates the usage of these methods:
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class OutputStreamMethodsExample {
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("example.txt")) {
+            // Write a single byte
+            fos.write(72); // ASCII code for 'H'
+
+            // Write a byte array
+            byte[] bytes = "ello, ".getBytes();
+            fos.write(bytes);
+
+            // Write a portion of a byte array
+            byte[] moreBytes = "World!".getBytes();
+            fos.write(moreBytes, 0, moreBytes.length);
+
+            // Flush the output stream
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+In this example:
+
+- `write(72)` writes the byte value corresponding to 'H'.
+- `write(byte[] b)` writes the entire byte array for "ello, ".
+- `write(byte[] b, int off, int len)` writes the entire byte array for "World!".
+- `flush()` ensures that all buffered data is written out to the file.
+- `close()` is automatically called at the end of the `try-with-resources` block, closing the `FileOutputStream` and releasing system resources.
+
+These methods form the core of how `OutputStream` operates, allowing flexible and efficient writing of data to various output destinations.
